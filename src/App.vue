@@ -1,30 +1,30 @@
 <template>
-  <div id="app" class="container mt-5">
-        <h1>RFshop</h1>
-        <price-slider :sliderStatus="sliderStatus" :maximum.sync="maximum"></price-slider>
-        <product-list :maximum="maximum" :products="products" @add="addItem"></product-list>
+  <div id="app" class="container">
+    <router-view
+      :cart="cart" 
+      :cartQty="cartQty" 
+      :cartTotal="cartTotal" 
+      :sliderStatus="style.sliderStatus" 
+      :maximum.sync="maximum"
+      :products="products" 
+      @toggle="toggleSliderStatus" 
+      @delete="deleteItem"
+      @add="addItem"></router-view>
   </div>
 </template>
 
 <script>
-// import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import PriceSlider from "./components/PriceSlider.vue";
-import ProductList from "./components/ProductList.vue"
-
 export default {
   name: "app",
-  data: function(){
+  data: function() {
     return {
       maximum: 50,
       products: [],
       cart: [],
-      sliderStatus: true
+      style: {
+        sliderStatus: false,
+      },
     }
-  },
-  components: {
-    // FontAwesomeIcon,
-    PriceSlider,
-    ProductList
   },
   mounted: function() {
     fetch('https://hplussport.com/api/products/order/price')
@@ -33,7 +33,22 @@ export default {
             this.products = data;
         });
   },
-
+  computed: {
+    cartTotal: function () {
+        let sum = 0;
+        for (let key in this.cart) {
+            sum = sum + (this.cart[key].product.price * this.cart[key].qty);
+        }
+        return sum;
+    },
+    cartQty: function () {
+        let qty = 0;
+        for (let key in this.cart) {
+            qty = qty + this.cart[key].qty;
+        }
+        return qty;
+    }
+  },
   methods: {
     toggleSliderStatus: function() {
       this.style.sliderStatus = !this.style.sliderStatus;
@@ -48,7 +63,6 @@ export default {
                 return false;
             }
         });
-
         if (productExist.length) {
             this.cart[productIndex].qty++
         } else {

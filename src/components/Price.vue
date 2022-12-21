@@ -12,7 +12,7 @@ export default {
         },
         precision: {
             type: Number,
-            default: 3
+            default: 2
         }
     }
 }

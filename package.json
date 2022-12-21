@@ -44,6 +44,7 @@
       "parser": "@babel/eslint-parser"
     },
       "rules": {
+        "no-unused-vars": "off"
     }
   },
   "browserslist": [
